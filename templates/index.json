@@ -1,0 +1,63 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {}
+    },
+    "shop": {
+      "type": "featured-collection",
+      "settings": {}
+    },
+    "details": {
+      "type": "details",
+      "blocks": {
+        "embroidery": {
+          "type": "tile",
+          "settings": {
+            "placeholder": "detail-embroidery.jpg",
+            "title": "Raised embroidery",
+            "text": "The full logo, stitched. Nothing to peel or crack."
+          }
+        },
+        "neck": {
+          "type": "tile",
+          "settings": {
+            "placeholder": "detail-neck.jpg",
+            "title": "Printed neck label",
+            "text": "No scratchy tag. Logo and size printed inside the collar."
+          }
+        },
+        "back": {
+          "type": "tile",
+          "settings": {
+            "placeholder": "detail-back.jpg",
+            "title": "Woven back tag",
+            "text": "A small Frenchie on the back so other club members know."
+          }
+        }
+      },
+      "block_order": ["embroidery", "neck", "back"],
+      "settings": {}
+    },
+    "custom": {
+      "type": "custom-hat-waitlist",
+      "settings": {}
+    },
+    "story": {
+      "type": "story",
+      "settings": {}
+    },
+    "perks": {
+      "type": "perks",
+      "blocks": {
+        "lasts": { "type": "perk", "settings": { "title": "Built to last", "text": "Stitched logos on the hats and soft, heavyweight tees that hold up in the wash." } },
+        "made": { "type": "perk", "settings": { "title": "Made to order", "text": "Produced when you order and ships in 3 to 5 business days." } },
+        "exchanges": { "type": "perk", "settings": { "title": "Easy exchanges", "text": "Wrong size or color? Swap it within 30 days." } },
+        "gift": { "type": "perk", "settings": { "title": "Gift ready", "text": "Add a gift note at checkout. No prices on the packing slip." } }
+      },
+      "block_order": ["lasts", "made", "exchanges", "gift"],
+      "settings": {}
+    }
+  },
+  "order": ["hero", "shop", "details", "custom", "story", "perks"]
+}

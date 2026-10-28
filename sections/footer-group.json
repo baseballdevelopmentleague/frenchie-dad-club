@@ -1,0 +1,18 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {}
+    },
+    "footer": {
+      "type": "footer",
+      "settings": {
+        "tagline": "Dogs / Dads / Good days",
+        "menu": "footer"
+      }
+    }
+  },
+  "order": ["newsletter", "footer"]
+}

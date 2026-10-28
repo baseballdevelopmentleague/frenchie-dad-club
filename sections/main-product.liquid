@@ -1,0 +1,92 @@
+{%- liquid
+  assign current = product.selected_or_first_available_variant
+  assign badge = ''
+  for tag in product.tags
+    if tag contains 'badge:'
+      assign badge = tag | remove_first: 'badge:' | strip
+      break
+    endif
+  endfor
+-%}
+<section class="pdp band" data-product>
+  <div class="wrap">
+    <div class="pdp-media">
+      <div class="pdp-main">
+        {%- if badge != blank -%}<span class="tag">{{ badge | escape }}</span>{%- endif -%}
+        {%- assign main = current.featured_media | default: product.featured_media -%}
+        {%- if product.gift_card? and main == blank -%}
+          <div class="gift-art"><span class="gm mk-lines"></span><span>GIFT CARD</span></div>
+        {%- elsif main -%}
+          {{ main | image_url: width: 1600 | image_tag: widths: '600, 900, 1200, 1600', sizes: '(min-width: 960px) 55vw, 100vw', alt: main.alt | default: product.title, loading: 'eager', fetchpriority: 'high', class: 'pdp-img' }}
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
+        {%- endif -%}
+      </div>
+      {%- if product.media.size > 1 -%}
+        <div class="pdp-thumbs" data-thumbs>
+          {%- for media in product.media -%}
+            {%- if media.media_type == 'image' -%}
+              <button type="button" data-src="{{ media | image_url: width: 1600 }}" data-media-id="{{ media.id }}" aria-label="Show image {{ forloop.index }}"{% if media.id == main.id %} aria-current="true"{% endif %}>
+                {{ media | image_url: width: 200 | image_tag: alt: '', loading: 'lazy' }}
+              </button>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="pdp-info">
+      {%- if product.type != blank -%}<div class="eyebrow">{{ product.type | escape }}</div>{%- endif -%}
+      <h1>{{ product.title | escape }}</h1>
+      <div class="rule"></div>
+      <div class="pdp-price" data-price>
+        {{ current.price | money }}
+        {%- if current.compare_at_price > current.price -%}<s>{{ current.compare_at_price | money }}</s>{%- endif -%}
+      </div>
+
+      {%- form 'product', product, class: 'pdp-form', data-product-form: '' -%}
+        <input type="hidden" name="id" value="{{ current.id }}" data-variant-id>
+        {%- unless product.has_only_default_variant -%}
+          {%- for option in product.options_with_values -%}
+            <fieldset class="opt">
+              <legend class="lbl">{{ option.name | escape }}{% if option.selected_value %}: <span data-opt-value="{{ forloop.index0 }}">{{ option.selected_value | escape }}</span>{% endif %}</legend>
+              <div class="opt-values">
+                {%- for value in option.values -%}
+                  <label>
+                    <input type="radio" name="option-{{ forloop.parentloop.index0 }}" value="{{ value | escape }}" data-option="{{ forloop.parentloop.index0 }}"{% if option.selected_value == value %} checked{% endif %}>
+                    <span>{{ value | escape }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endfor -%}
+        {%- endunless -%}
+        <div class="field qty">
+          <label for="qty-{{ section.id }}">Quantity</label>
+          <input id="qty-{{ section.id }}" type="number" name="quantity" value="1" min="1" inputmode="numeric">
+        </div>
+        <button class="btn btn-ink pdp-add" type="submit" data-add{% unless current.available %} disabled{% endunless %}>
+          {%- if current.available -%}Add to cart{%- else -%}Sold out{%- endif -%}
+        </button>
+        {{ form | payment_button }}
+      {%- endform -%}
+
+      {%- if product.description != blank -%}
+        <div class="rte pdp-desc">{{ product.description }}</div>
+      {%- endif -%}
+      {%- if section.settings.note != blank -%}
+        <p class="pdp-note">{{ section.settings.note | escape }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+  <script type="application/json" data-variants>{{ product.variants | json }}</script>
+</section>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [
+    { "type": "text", "id": "note", "label": "Note under the description", "default": "Made to order. Ships in 3 to 5 business days. Free exchanges within 30 days." }
+  ]
+}
+{% endschema %}

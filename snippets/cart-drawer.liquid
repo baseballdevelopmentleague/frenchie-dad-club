@@ -1,0 +1,14 @@
+{%- comment -%} Slide-out cart. Lines are rendered by theme.js from /cart.js. {%- endcomment -%}
+<div class="scrim" data-cart-scrim hidden></div>
+<aside class="drawer" data-cart-drawer hidden aria-label="Cart" tabindex="-1">
+  <header>
+    <h3>Your cart</h3>
+    <button class="x" type="button" data-cart-close aria-label="Close cart">×</button>
+  </header>
+  <ul class="lines" data-cart-lines></ul>
+  <div class="total"><span>Subtotal</span><span data-cart-subtotal>{{ cart.total_price | money }}</span></div>
+  <form action="{{ routes.cart_url }}" method="post">
+    <button class="btn btn-ink" type="submit" name="checkout">Checkout</button>
+  </form>
+  <p class="fine">Shipping and taxes are calculated at checkout. <a href="{{ routes.cart_url }}">View cart</a></p>
+</aside>

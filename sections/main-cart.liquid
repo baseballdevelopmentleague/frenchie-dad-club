@@ -1,0 +1,52 @@
+{%- comment -%} Full cart page. Works without JavaScript; the drawer is the fast path. {%- endcomment -%}
+<section class="block band cart-page">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Cart</div>
+        <h1 class="h2">Your cart</h1>
+        <div class="rule"></div>
+      </div>
+    </div>
+    {%- if cart.item_count == 0 -%}
+      <p class="empty">Your cart is empty. The Classic Dad Hat is a good place to start.</p>
+      <p style="margin-top: 20px"><a class="btn btn-ink" href="{{ routes.all_products_collection_url }}">Shop the club</a></p>
+    {%- else -%}
+      <form action="{{ routes.cart_url }}" method="post" novalidate>
+        <ul class="lines cart-lines">
+          {%- for item in cart.items -%}
+            <li>
+              <a class="thumb" href="{{ item.url }}">
+                {%- if item.image -%}{{ item.image | image_url: width: 160 | image_tag: alt: '' }}{%- endif -%}
+              </a>
+              <div>
+                <a class="nm" href="{{ item.url }}">{{ item.product.title | escape }}</a>
+                {%- unless item.product.has_only_default_variant -%}<div class="dt">{{ item.variant.title | escape }}</div>{%- endunless -%}
+                <div class="qty-row">
+                  <label class="visually-hidden" for="q-{{ item.key }}">Quantity</label>
+                  <input id="q-{{ item.key }}" type="number" name="updates[]" value="{{ item.quantity }}" min="0" inputmode="numeric">
+                  <a class="rm" href="{{ item.url_to_remove }}">Remove</a>
+                </div>
+              </div>
+              <div class="pr">{{ item.final_line_price | money }}</div>
+            </li>
+          {%- endfor -%}
+        </ul>
+        <div class="field">
+          <label for="cart-note">Gift note (optional)</label>
+          <textarea id="cart-note" name="note" rows="3">{{ cart.note }}</textarea>
+        </div>
+        <div class="total"><span>Subtotal</span><span>{{ cart.total_price | money }}</span></div>
+        <p class="fine">Shipping and taxes are calculated at checkout.</p>
+        <div class="cart-actions">
+          <button class="btn btn-line" type="submit" name="update">Update cart</button>
+          <button class="btn btn-ink" type="submit" name="checkout">Checkout</button>
+        </div>
+      </form>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Cart", "settings": [] }
+{% endschema %}

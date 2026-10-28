@@ -1,0 +1,35 @@
+<section class="band perks-band">
+  <div class="wrap">
+    <div class="perks">
+      {%- for block in section.blocks -%}
+        <div class="perk" {{ block.shopify_attributes }}>
+          <b>{{ block.settings.title | escape }}</b>
+          <span>{{ block.settings.text | escape }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Perks",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "perk",
+      "name": "Perk",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Perk" },
+        { "type": "text", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Perks",
+      "blocks": [{ "type": "perk" }, { "type": "perk" }, { "type": "perk" }, { "type": "perk" }]
+    }
+  ]
+}
+{% endschema %}

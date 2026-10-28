@@ -1,0 +1,85 @@
+{%- comment -%}
+  Custom hats are not orderable yet. Visitors try the live preview, then join a waitlist:
+  Shopify saves them as customers tagged "custom-waitlist".
+{%- endcomment -%}
+<section class="block band" id="custom">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        {%- if section.settings.eyebrow != blank -%}<div class="eyebrow">{{ section.settings.eyebrow | escape }}</div>{%- endif -%}
+        <h2>{{ section.settings.heading | escape }}</h2>
+        <div class="rule"></div>
+      </div>
+      {%- if section.settings.text != blank -%}<p>{{ section.settings.text | escape }}</p>{%- endif -%}
+    </div>
+    <div class="builder" data-custom-hat>
+      {%- form 'customer', id: 'waitlist-form', class: 'form', autocomplete: 'off' -%}
+        <input type="hidden" name="contact[tags]" value="custom-waitlist">
+        <div class="field">
+          <label for="dogName">Frenchie's name</label>
+          <input id="dogName" maxlength="10" value="Gus" data-dog>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="dadYear">Dad since</label>
+            <input id="dadYear" inputmode="numeric" maxlength="4" value="{{ 'now' | date: '%Y' | minus: 3 }}" data-year>
+          </div>
+          <div class="field">
+            <label for="dadName">Your first name</label>
+            <input id="dadName" maxlength="14" placeholder="Optional" data-dad>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lbl" id="hatColorLabel">Hat color</span>
+          <div class="hat-colors" role="group" aria-labelledby="hatColorLabel" data-colors></div>
+        </div>
+        <div class="field">
+          <label for="waitEmail">Email</label>
+          <input id="waitEmail" type="email" name="contact[email]" placeholder="you@email.com" autocomplete="email" required>
+        </div>
+        <div class="builder-buy">
+          <button class="btn btn-ink" type="submit">{{ section.settings.button | escape }}</button>
+          <span class="soon">Not available to order yet</span>
+        </div>
+        <div class="wait-msg" role="status">
+          {%- if form.posted_successfully? -%}
+            {{ section.settings.success | escape }}
+          {%- elsif form.errors -%}
+            {{ form.errors | default_errors }}
+          {%- endif -%}
+        </div>
+      {%- endform -%}
+      <div class="preview">
+        <div class="preview-cap" data-cap></div>
+        {%- if section.settings.show_card -%}
+          <div class="card-id" aria-label="Member card preview">
+            <img class="mk" src="{{ 'mark.png' | asset_url }}" alt="" width="360" height="336">
+            <div class="ttl">FRENCHIE DAD CLUB · MEMBER</div>
+            <div class="sig" data-card-sig>Gus's Dad</div>
+            <dl>
+              <div><dt>Frenchie</dt><dd data-card-name>Gus</dd></div>
+              <div><dt>Dad since</dt><dd data-card-year></dd></div>
+              <div><dt>Member no.</dt><dd data-card-no>0000</dd></div>
+            </dl>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+<script src="{{ 'custom-hat.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Custom hat waitlist",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Coming soon" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Custom hats for your dog" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "We're working on hats with your Frenchie's name and the year you became a dad stitched under the logo. Try the preview, then join the waitlist and we'll email you when they launch." },
+    { "type": "text", "id": "button", "label": "Button", "default": "Get notified" },
+    { "type": "text", "id": "success", "label": "Success message", "default": "You're on the list. We'll email you when custom hats can be ordered." },
+    { "type": "checkbox", "id": "show_card", "label": "Show member card preview", "default": true }
+  ],
+  "presets": [{ "name": "Custom hat waitlist" }]
+}
+{% endschema %}

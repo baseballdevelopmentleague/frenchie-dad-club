@@ -1,0 +1,52 @@
+<header class="header">
+  {%- if section.settings.announcement != blank -%}
+    <div class="announce band">{{ section.settings.announcement | escape }}</div>
+  {%- endif -%}
+  <div class="band">
+    <div class="wrap">
+      <a class="logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }} home">
+        <img class="mk" src="{{ 'mark.png' | asset_url }}" alt="" width="360" height="336">
+        <img class="wm" src="{{ 'wordmark-plain-black.png' | asset_url }}" alt="{{ shop.name | escape }}" width="640" height="150">
+      </a>
+      <nav class="nav" aria-label="Main">
+        {%- for link in section.settings.menu.links -%}
+          <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+        {%- endfor -%}
+      </nav>
+      <details class="mnav">
+        <summary aria-label="Menu">Menu</summary>
+        <nav aria-label="Main">
+          {%- for link in section.settings.menu.links -%}
+            <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+          {%- endfor -%}
+        </nav>
+      </details>
+      <a class="cart-btn" href="{{ routes.cart_url }}" data-cart-open aria-label="Open cart">
+        Cart <span class="cart-count" data-cart-count>{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "enabled_on": { "groups": ["header"] },
+  "settings": [
+    {
+      "type": "text",
+      "id": "announcement",
+      "label": "Announcement bar",
+      "default": "Free shipping over $50 · Every piece made to order",
+      "info": "Leave empty to hide the black bar."
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %}

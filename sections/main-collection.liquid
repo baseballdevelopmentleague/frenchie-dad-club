@@ -1,0 +1,33 @@
+<section class="block band">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">{{ section.settings.eyebrow | escape }}</div>
+        <h1 class="h2">{{ collection.title | escape }}</h1>
+        <div class="rule"></div>
+      </div>
+      {%- if collection.description != blank -%}<div class="rte sec-desc">{{ collection.description }}</div>{%- endif -%}
+    </div>
+    {%- paginate collection.products by 48 -%}
+      {%- render 'product-grid',
+        products: collection.products,
+        types: section.settings.types,
+        show_filters: section.settings.show_filters
+      -%}
+      {%- if paginate.pages > 1 -%}
+        <nav class="pager" aria-label="Pages">{{ paginate | default_pagination }}</nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The collection" },
+    { "type": "checkbox", "id": "show_filters", "label": "Show category buttons", "default": true },
+    { "type": "text", "id": "types", "label": "Categories (product types, in order)", "default": "Hats, Tees, Hoodies, Drinkware, Extras", "info": "Must match each product's Type field exactly." }
+  ]
+}
+{% endschema %}

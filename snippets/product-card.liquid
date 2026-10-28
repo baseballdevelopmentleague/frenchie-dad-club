@@ -1,0 +1,60 @@
+{%- comment -%}
+  One product tile.
+  - product: product object
+  Badges come from tags that start with "badge:", e.g. "badge:Bestseller".
+  Single-variant products add straight to the cart; the rest link to the product page.
+{%- endcomment -%}
+{%- liquid
+  assign badge = ''
+  for tag in product.tags
+    if tag contains 'badge:'
+      assign badge = tag | remove_first: 'badge:' | strip
+      break
+    endif
+  endfor
+
+  assign color_values = ''
+  for option in product.options_with_values
+    assign opt = option.name | downcase
+    if opt == 'color' or opt == 'colour'
+      assign color_values = option.values
+    endif
+  endfor
+
+  assign sub = product.type
+  if color_values.size == 1
+    assign sub = color_values | first
+  elsif color_values.size > 1
+    assign sub = color_values.size | append: ' colors'
+  endif
+-%}
+<article class="prod{% if product.gift_card? %} gift{% endif %}" data-type="{{ product.type | escape }}">
+  <a class="media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+    {%- if badge != blank -%}<span class="tag">{{ badge | escape }}</span>{%- endif -%}
+    {%- if product.gift_card? -%}
+      <div><span class="gm mk-lines"></span><span>GIFT CARD</span></div>
+    {%- elsif product.featured_media -%}
+      {{ product.featured_media | image_url: width: 800 | image_tag: widths: '300, 400, 600, 800', sizes: '(min-width: 960px) 25vw, 50vw', alt: product.featured_media.alt | default: product.title, loading: 'lazy' }}
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
+    {%- endif -%}
+  </a>
+  <h3><a href="{{ product.url }}">{{ product.title | escape }}</a></h3>
+  <div class="meta">
+    <span>{{ sub | escape }}</span>
+    <b>
+      {%- if product.price_varies -%}From {% endif -%}
+      {{ product.price_min | money_without_trailing_zeros }}
+    </b>
+  </div>
+  {%- if product.available == false -%}
+    <span class="add is-off">Sold out</span>
+  {%- elsif product.has_only_default_variant -%}
+    {%- form 'product', product, class: 'quick-add' -%}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <button class="add" type="submit">Add to cart</button>
+    {%- endform -%}
+  {%- else -%}
+    <a class="add" href="{{ product.url }}">Choose options</a>
+  {%- endif -%}
+</article>

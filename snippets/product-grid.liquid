@@ -1,0 +1,26 @@
+{%- comment -%}
+  Category chips plus the product grid. Chips filter in the browser by product type.
+  - products: array of products
+  - types: comma-separated product types, in chip order (e.g. "Hats, Tees, Hoodies, Drinkware, Extras")
+  - show_filters: boolean
+{%- endcomment -%}
+{%- if show_filters and types != blank -%}
+  <div class="filters" role="group" aria-label="Filter by category" data-filters>
+    <button type="button" data-cat="all" aria-pressed="true">All<span>{{ products.size }}</span></button>
+    {%- assign type_list = types | split: ',' -%}
+    {%- for t in type_list -%}
+      {%- assign type_name = t | strip -%}
+      {%- assign n = products | where: 'type', type_name | size -%}
+      {%- if n > 0 -%}
+        <button type="button" data-cat="{{ type_name | escape }}" aria-pressed="false">{{ type_name | escape }}<span>{{ n }}</span></button>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+<div class="grid" data-grid>
+  {%- for product in products -%}
+    {%- render 'product-card', product: product -%}
+  {%- else -%}
+    <p class="empty">No products here yet.</p>
+  {%- endfor -%}
+</div>

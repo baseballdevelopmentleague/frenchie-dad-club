@@ -1,0 +1,47 @@
+{%- layout none -%}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your {{ shop.name }} gift card</title>
+  <style>
+    {{ settings.type_body | font_face: font_display: 'swap' }}
+    {{ settings.type_body | font_modify: 'weight', '600' | font_face: font_display: 'swap' }}
+    :root { --f-sans: {{ settings.type_body.family }}, "Helvetica Neue", Arial, {{ settings.type_body.fallback_families }}; }
+  </style>
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'vendor/qrcode.js' | shopify_asset_url }}" defer></script>
+  {{ content_for_header }}
+</head>
+<body class="template-gift-card">
+  <main class="gc band">
+    <div class="wrap">
+      <div class="gc-card dark">
+        <span class="gm mk-lines" aria-hidden="true"></span>
+        <div class="eyebrow" style="color: var(--soft)">Frenchie Dad Club · Gift card</div>
+        <div class="gc-amount">{{ gift_card.balance | money }}</div>
+        {%- if gift_card.balance != gift_card.initial_value -%}
+          <div class="fine">Original value {{ gift_card.initial_value | money }}</div>
+        {%- endif -%}
+        {%- if gift_card.expired or gift_card.enabled == false -%}
+          <div class="fine">This gift card is no longer active.</div>
+        {%- endif -%}
+      </div>
+      <p class="lbl" style="margin-top: 28px">Code</p>
+      <p class="gc-code">{{ gift_card.code | format_code }}</p>
+      <div id="QrCode" data-identifier="{{ gift_card.qr_identifier }}" style="margin-top: 16px"></div>
+      <div class="ctas">
+        <a class="btn btn-ink" href="{{ shop.url }}">Start shopping</a>
+        {%- if gift_card.pass_url -%}<a class="btn btn-line" href="{{ gift_card.pass_url }}">Add to Apple Wallet</a>{%- endif -%}
+      </div>
+    </div>
+  </main>
+  <script>
+    window.addEventListener("load", () => {
+      const el = document.getElementById("QrCode");
+      if (window.QRCode && el) new QRCode(el, { text: el.dataset.identifier, width: 120, height: 120 });
+    });
+  </script>
+</body>
+</html>

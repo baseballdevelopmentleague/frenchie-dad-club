@@ -1,0 +1,32 @@
+<section class="block band">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Shop</div>
+        <h1 class="h2">Collections</h1>
+        <div class="rule"></div>
+      </div>
+    </div>
+    <div class="grid">
+      {%- for collection in collections -%}
+        {%- if collection.handle == 'frontpage' -%}{%- continue -%}{%- endif -%}
+        <article class="prod">
+          <a class="media" href="{{ collection.url }}" tabindex="-1" aria-hidden="true">
+            {%- assign img = collection.featured_image | default: collection.products.first.featured_media -%}
+            {%- if img -%}
+              {{ img | image_url: width: 800 | image_tag: widths: '300, 400, 600, 800', sizes: '(min-width: 960px) 25vw, 50vw', alt: collection.title, loading: 'lazy' }}
+            {%- else -%}
+              {{ 'collection-1' | placeholder_svg_tag: 'placeholder' }}
+            {%- endif -%}
+          </a>
+          <h3><a href="{{ collection.url }}">{{ collection.title | escape }}</a></h3>
+          <div class="meta"><span>{{ collection.products_count }} items</span></div>
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Collections list", "settings": [] }
+{% endschema %}

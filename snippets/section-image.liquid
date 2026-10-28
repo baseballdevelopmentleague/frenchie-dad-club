@@ -1,0 +1,23 @@
+{%- comment -%}
+  Renders a merchant-picked image, or a bundled concept image until one is picked.
+  - image: image object from an image_picker setting (may be blank)
+  - placeholder: theme asset filename to show while image is blank
+  - alt: fallback alt text
+  - sizes: sizes attribute
+  - eager: true for above-the-fold images
+{%- endcomment -%}
+{%- liquid
+  assign loading = 'lazy'
+  assign priority = 'auto'
+  if eager
+    assign loading = 'eager'
+    assign priority = 'high'
+  endif
+-%}
+{%- if image != blank -%}
+  {{ image | image_url: width: 2400 | image_tag: widths: '600, 900, 1200, 1600, 2400', sizes: sizes, alt: image.alt | default: alt, loading: loading, fetchpriority: priority }}
+{%- elsif placeholder != blank -%}
+  <img src="{{ placeholder | asset_url }}" alt="{{ alt | escape }}" width="1200" height="1200" loading="{{ loading }}" fetchpriority="{{ priority }}">
+{%- else -%}
+  {{ 'image' | placeholder_svg_tag: 'placeholder' }}
+{%- endif -%}

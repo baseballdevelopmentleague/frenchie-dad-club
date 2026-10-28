@@ -1,0 +1,14 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "header": {
+      "type": "header",
+      "settings": {
+        "announcement": "Free shipping over $50 · Every piece made to order",
+        "menu": "main-menu"
+      }
+    }
+  },
+  "order": ["header"]
+}

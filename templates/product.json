@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": { "type": "main-product", "settings": {} },
+    "perks": {
+      "type": "perks",
+      "blocks": {
+        "made": { "type": "perk", "settings": { "title": "Made to order", "text": "Produced when you order and ships in 3 to 5 business days." } },
+        "exchanges": { "type": "perk", "settings": { "title": "Easy exchanges", "text": "Wrong size or color? Swap it within 30 days." } },
+        "shipping": { "type": "perk", "settings": { "title": "Free shipping", "text": "On orders over $50 in the US." } },
+        "gift": { "type": "perk", "settings": { "title": "Gift ready", "text": "Add a gift note at checkout. No prices on the packing slip." } }
+      },
+      "block_order": ["made", "exchanges", "shipping", "gift"],
+      "settings": {}
+    }
+  },
+  "order": ["main", "perks"]
+}

@@ -1,0 +1,43 @@
+{%- comment -%}
+  "Join the club" signup. Shopify saves the email as a customer with the
+  "newsletter" tag and email marketing consent.
+{%- endcomment -%}
+<section class="join dark band" id="join">
+  <div class="wrap">
+    <div>
+      {%- if section.settings.eyebrow != blank -%}
+        <div class="eyebrow" style="color: var(--soft)">{{ section.settings.eyebrow | escape }}</div>
+      {%- endif -%}
+      <h2 style="margin-top: 12px">{{ section.settings.heading | escape }}</h2>
+      <div class="rule"></div>
+      {%- if section.settings.text != blank -%}<p>{{ section.settings.text | escape }}</p>{%- endif -%}
+    </div>
+    {%- form 'customer', id: 'join-form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <label for="join-email" class="lbl">Email</label>
+      <input id="join-email" type="email" name="contact[email]" placeholder="you@email.com" autocomplete="email" required>
+      <button class="btn btn-white" type="submit">{{ section.settings.button | escape }}</button>
+      <div class="msg" role="status">
+        {%- if form.posted_successfully? -%}
+          {{ section.settings.success | escape }}
+        {%- elsif form.errors -%}
+          {{ form.errors | default_errors }}
+        {%- endif -%}
+      </div>
+    {%- endform -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Join the club",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Members only" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Join the club." },
+    { "type": "text", "id": "text", "label": "Text", "default": "New colors, restocks and the occasional photo of somebody's Frenchie in a hat. One or two emails a month." },
+    { "type": "text", "id": "button", "label": "Button", "default": "Join" },
+    { "type": "text", "id": "success", "label": "Success message", "default": "You're in. Welcome to the club." }
+  ],
+  "presets": [{ "name": "Join the club" }]
+}
+{% endschema %}
