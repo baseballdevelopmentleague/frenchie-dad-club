@@ -39,7 +39,8 @@
     {%- if product.gift_card? -%}
       <div><span class="gm mk-lines"></span><span>GIFT CARD</span></div>
     {%- elsif product.featured_media -%}
-      {{ product.featured_media | image_url: width: 800 | image_tag: widths: '300, 400, 600, 800', sizes: '(min-width: 960px) 25vw, 50vw', alt: product.featured_media.alt | default: product.title, loading: 'lazy' }}
+      {%- assign card_alt = product.featured_media.alt | default: product.title -%}
+      {{ product.featured_media | image_url: width: 800 | image_tag: widths: '300, 400, 600, 800', sizes: '(min-width: 960px) 25vw, 50vw', alt: card_alt, loading: 'lazy' }}
     {%- else -%}
       {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
     {%- endif -%}
