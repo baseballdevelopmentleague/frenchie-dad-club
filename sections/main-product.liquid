@@ -17,7 +17,8 @@
         {%- if product.gift_card? and main == blank -%}
           <div class="gift-art"><span class="gm mk-lines"></span><span>GIFT CARD</span></div>
         {%- elsif main -%}
-          {{ main | image_url: width: 1600 | image_tag: widths: '600, 900, 1200, 1600', sizes: '(min-width: 960px) 55vw, 100vw', alt: main.alt | default: product.title, loading: 'eager', fetchpriority: 'high', class: 'pdp-img' }}
+          {%- assign main_alt = main.alt | default: product.title -%}
+          {{ main | image_url: width: 1600 | image_tag: widths: '600, 900, 1200, 1600', sizes: '(min-width: 960px) 55vw, 100vw', alt: main_alt, loading: 'eager', fetchpriority: 'high', class: 'pdp-img' }}
         {%- else -%}
           {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
         {%- endif -%}
