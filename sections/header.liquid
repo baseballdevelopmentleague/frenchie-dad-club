@@ -9,16 +9,12 @@
         <img class="wm" src="{{ 'wordmark-plain-black.png' | asset_url }}" alt="{{ shop.name | escape }}" width="640" height="150">
       </a>
       <nav class="nav" aria-label="Main">
-        {%- for link in section.settings.menu.links -%}
-          <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
-        {%- endfor -%}
+        {%- render 'header-menu', menu: section.settings.menu, variant: 'desktop' -%}
       </nav>
       <details class="mnav">
         <summary aria-label="Menu">Menu</summary>
         <nav aria-label="Main">
-          {%- for link in section.settings.menu.links -%}
-            <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
-          {%- endfor -%}
+          {%- render 'header-menu', menu: section.settings.menu, variant: 'mobile' -%}
         </nav>
       </details>
       <a class="cart-btn" href="{{ routes.cart_url }}" data-cart-open aria-label="Open cart">

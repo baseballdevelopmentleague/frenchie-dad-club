@@ -1,0 +1,68 @@
+{% doc %}
+  Renders pagination for a collection or search. Page links stay on that collection or search and keep the sort and active filters.
+
+  @param {object} paginate - Paginate object from the current paginate tag
+  @param {object} [collection] - Collection being paged
+  @param {object} [search] - Search being paged
+
+  @example
+  {% render 'pagination', paginate: paginate, collection: collection %}
+{% enddoc %}
+{%- if paginate.pages > 1 -%}
+  {%- liquid
+    assign page_base = request.path
+    assign extra = ''
+
+    if collection != blank
+      assign page_base = collection.url
+      if current_tags != blank
+        assign tag_suffix = current_tags | join: '+'
+        assign page_base = page_base | append: '/' | append: tag_suffix
+      endif
+      if collection.sort_by != blank
+        assign extra = extra | append: '&sort_by=' | append: collection.sort_by | url_encode
+      endif
+      for filter in collection.filters
+        if filter.type == 'price_range'
+          if filter.min_value.value != blank
+            assign extra = extra | append: '&' | append: filter.min_value.param_name | append: '=' | append: filter.min_value.value
+          endif
+          if filter.max_value.value != blank
+            assign extra = extra | append: '&' | append: filter.max_value.param_name | append: '=' | append: filter.max_value.value
+          endif
+        else
+          for value in filter.active_values
+            assign extra = extra | append: '&' | append: value.param_name | append: '=' | append: value.value | url_encode
+          endfor
+        endif
+      endfor
+    elsif search != blank and search.performed
+      assign page_base = routes.search_url | append: '?type=product&q=' | append: search.terms | url_encode
+    endif
+
+    if page_base contains '?'
+      assign page_join = '&'
+    else
+      assign page_join = '?'
+    endif
+  -%}
+  <nav class="pager" aria-label="{{ 'general.pagination.label' | t }}">
+    {%- if paginate.previous -%}
+      {%- assign page_number = paginate.current_page | minus: 1 -%}
+      <a href="{{ page_base | append: page_join | append: paginate.page_param | append: '=' | append: page_number | append: extra }}" rel="prev">{{ 'general.pagination.previous' | t }}</a>
+    {%- endif -%}
+    {%- for part in paginate.parts -%}
+      {%- if part.is_link -%}
+        <a href="{{ page_base | append: page_join | append: paginate.page_param | append: '=' | append: part.title | append: extra }}">{{ part.title }}</a>
+      {%- elsif part.title == paginate.current_page -%}
+        <span class="current" aria-current="page">{{ part.title }}</span>
+      {%- else -%}
+        <span>{{ part.title }}</span>
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if paginate.next -%}
+      {%- assign page_number = paginate.current_page | plus: 1 -%}
+      <a href="{{ page_base | append: page_join | append: paginate.page_param | append: '=' | append: page_number | append: extra }}" rel="next">{{ 'general.pagination.next' | t }}</a>
+    {%- endif -%}
+  </nav>
+{%- endif -%}

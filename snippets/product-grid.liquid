@@ -1,25 +1,42 @@
 {%- comment -%}
-  Category chips plus the product grid. Chips filter in the browser by product type.
-  - products: array of products
-  - types: comma-separated product types, in chip order (e.g. "Hats, Tees, Hoodies, Drinkware, Extras")
+  Category chips plus the product grid.
+  - products: array of products, already in collection order when paginated
+  - collection: collection the products belong to, when this is a collection page
+  - types: comma-separated product types, in chip order
   - show_filters: boolean
+  - filter_mode: "collections" links each chip to that collection. Otherwise chips filter the current grid in the browser.
 {%- endcomment -%}
 {%- if show_filters and types != blank -%}
-  <div class="filters" role="group" aria-label="Filter by category" data-filters>
-    <button type="button" data-cat="all" aria-pressed="true">All<span>{{ products.size }}</span></button>
-    {%- assign type_list = types | split: ',' -%}
-    {%- for t in type_list -%}
-      {%- assign type_name = t | strip -%}
-      {%- assign n = products | where: 'type', type_name | size -%}
-      {%- if n > 0 -%}
-        <button type="button" data-cat="{{ type_name | escape }}" aria-pressed="false">{{ type_name | escape }}<span>{{ n }}</span></button>
-      {%- endif -%}
-    {%- endfor -%}
-  </div>
+  {%- if filter_mode == 'collections' -%}
+    <nav class="filters" aria-label="{{ 'general.collections.label' | t }}">
+      <a href="{{ routes.all_products_collection_url }}"{% if collection.handle == 'all' %} aria-current="page"{% endif %}>{{ 'general.collections.all' | t }}<span>{{ collections.all.products_count }}</span></a>
+      {%- assign type_list = types | split: ',' -%}
+      {%- for t in type_list -%}
+        {%- assign type_name = t | strip -%}
+        {%- assign type_handle = type_name | handleize -%}
+        {%- assign type_collection = collections[type_handle] -%}
+        {%- if type_collection != blank -%}
+          <a href="{{ type_collection.url }}"{% if collection.handle == type_handle %} aria-current="page"{% endif %}>{{ type_name | escape }}<span>{{ type_collection.products_count }}</span></a>
+        {%- endif -%}
+      {%- endfor -%}
+    </nav>
+  {%- else -%}
+    <div class="filters" role="group" aria-label="{{ 'general.collections.label' | t }}" data-filters>
+      <button type="button" data-cat="all" aria-pressed="true">{{ 'general.collections.all' | t }}<span>{{ products.size }}</span></button>
+      {%- assign type_list = types | split: ',' -%}
+      {%- for t in type_list -%}
+        {%- assign type_name = t | strip -%}
+        {%- assign n = products | where: 'type', type_name | size -%}
+        {%- if n > 0 -%}
+          <button type="button" data-cat="{{ type_name | escape }}" aria-pressed="false">{{ type_name | escape }}<span>{{ n }}</span></button>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
 {%- endif -%}
 <div class="grid" data-grid>
   {%- for product in products -%}
-    {%- render 'product-card', product: product -%}
+    {%- render 'product-card', product: product, collection: collection -%}
   {%- else -%}
     <p class="empty">No products here yet.</p>
   {%- endfor -%}

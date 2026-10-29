@@ -141,4 +141,125 @@
       showImage(t.dataset.src); setCurrentThumb(t);
     });
   }
+
+  // Header: parent links with children. Hover opens on a mouse; click, Enter, and Space toggle.
+  const nav = $(".nav");
+  const dropdowns = nav ? $$(".nav-item", nav) : [];
+  const closeTimers = new WeakMap();
+  const openedAt = new WeakMap();
+  let touchedAt = 0;
+
+  function recentTouch() { return Date.now() - touchedAt < 700; }
+  function isOpen(item) { return item.classList.contains("is-open"); }
+  function toggleBtn(item) { return $(".nav-toggle", item); }
+  function panelOf(item) { return $(".nav-dropdown", item); }
+  function panelLinks(item) { return $$(".nav-dropdown a", item); }
+
+  function setOpen(item, open, focusFirst) {
+    clearTimeout(closeTimers.get(item));
+    if (!open) openedAt.set(item, 0);
+    item.classList.toggle("is-open", open);
+    const btn = toggleBtn(item);
+    if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open) dropdowns.forEach(other => { if (other !== item) setOpen(other, false); });
+    if (open && focusFirst) panelLinks(item)[0]?.focus();
+  }
+
+  if (dropdowns.length) {
+    document.addEventListener("pointerdown", e => {
+      if (e.pointerType === "touch") touchedAt = Date.now();
+    }, true);
+
+    dropdowns.forEach(item => {
+      const btn = toggleBtn(item);
+      const panel = panelOf(item);
+      if (!btn || !panel) return;
+      if (item.matches(":hover")) {
+        setOpen(item, true);
+        openedAt.set(item, performance.now());
+      }
+
+      btn.addEventListener("click", () => {
+        const at = openedAt.get(item) || 0;
+        if (at && performance.now() - at < 300) {
+          openedAt.set(item, 0);
+          setOpen(item, true);
+          return;
+        }
+        setOpen(item, !isOpen(item));
+      });
+
+      item.addEventListener("pointerenter", e => {
+        if (e.pointerType !== "mouse" || recentTouch()) return;
+        const wasOpen = isOpen(item);
+        setOpen(item, true);
+        if (!wasOpen) openedAt.set(item, performance.now());
+      });
+
+      item.addEventListener("pointerleave", e => {
+        if (e.pointerType !== "mouse" || recentTouch()) return;
+        closeTimers.set(item, setTimeout(() => {
+          if (panel.contains(document.activeElement) || item.matches(":hover")) return;
+          setOpen(item, false);
+        }, 150));
+      });
+
+      item.addEventListener("focusout", e => {
+        if (item.contains(e.relatedTarget)) return;
+        setOpen(item, false);
+      });
+
+      item.addEventListener("keydown", e => {
+        const links = panelLinks(item);
+        const index = links.indexOf(document.activeElement);
+        if (e.key === "Escape") {
+          if (!isOpen(item)) return;
+          e.preventDefault();
+          setOpen(item, false);
+          btn.focus();
+        } else if (e.key === "ArrowDown") {
+          e.preventDefault();
+          if (!isOpen(item) || document.activeElement === btn) setOpen(item, true, true);
+          else if (index >= 0 && index < links.length - 1) links[index + 1].focus();
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          if (index > 0) links[index - 1].focus();
+          else btn.focus();
+        } else if (e.key === "Home" && index >= 0) {
+          e.preventDefault();
+          links[0]?.focus();
+        } else if (e.key === "End" && index >= 0) {
+          e.preventDefault();
+          links[links.length - 1]?.focus();
+        }
+      });
+
+      panel.addEventListener("click", e => {
+        if (e.target.closest("a")) setOpen(item, false);
+      });
+    });
+
+    document.addEventListener("click", e => {
+      dropdowns.forEach(item => {
+        if (!item.contains(e.target)) setOpen(item, false);
+      });
+    });
+
+    nav.classList.add("nav-js");
+  }
+
+  const menuDrawer = $("details.mnav");
+  const headerBar = $(".shopify-section-group-header-group") || $(".header");
+  function syncMenuBounds() {
+    if (!headerBar) return;
+    const bottom = Math.max(0, headerBar.getBoundingClientRect().bottom);
+    document.documentElement.style.setProperty("--header-bottom", bottom + "px");
+  }
+  syncMenuBounds();
+  window.addEventListener("resize", syncMenuBounds);
+  window.addEventListener("scroll", syncMenuBounds, { passive: true });
+  menuDrawer?.addEventListener("toggle", syncMenuBounds);
+  menuDrawer?.querySelector("nav")?.addEventListener("click", e => {
+    if (e.target.closest("a")) menuDrawer.open = false;
+  });
 })();

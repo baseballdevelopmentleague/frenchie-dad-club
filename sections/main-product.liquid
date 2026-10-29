@@ -77,6 +77,27 @@
       {%- if section.settings.note != blank -%}
         <p class="pdp-note">{{ section.settings.note | escape }}</p>
       {%- endif -%}
+      {%- if collection -%}
+        <nav class="pdp-more" aria-label="{{ 'general.product.collection_nav' | t: collection: collection.title }}">
+          <div class="pdp-more-prev">
+            {%- if collection.previous_product -%}
+              <a rel="prev" href="{{ collection.previous_product.url | within: collection }}">
+                <span>{{ 'general.pagination.previous' | t }}</span>
+                {{ collection.previous_product.title | escape }}
+              </a>
+            {%- endif -%}
+          </div>
+          <a class="pdp-more-all" href="{{ collection.url }}">{{ 'general.product.more_from_collection' | t: collection: collection.title }}</a>
+          <div class="pdp-more-next">
+            {%- if collection.next_product -%}
+              <a rel="next" href="{{ collection.next_product.url | within: collection }}">
+                <span>{{ 'general.pagination.next' | t }}</span>
+                {{ collection.next_product.title | escape }}
+              </a>
+            {%- endif -%}
+          </div>
+        </nav>
+      {%- endif -%}
     </div>
   </div>
   <script type="application/json" data-variants>{{ product.variants | json }}</script>

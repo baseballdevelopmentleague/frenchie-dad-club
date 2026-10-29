@@ -1,5 +1,18 @@
 {
   "general": {
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "collections": {
+      "label": "Categories",
+      "all": "All"
+    },
+    "product": {
+      "collection_nav": "More from {{ collection }}",
+      "more_from_collection": "More from {{ collection }}"
+    },
     "password_page": {
       "login_form_heading": "Enter store using password",
       "login_form_password_label": "Password",
