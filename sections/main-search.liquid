@@ -22,7 +22,7 @@
             <p class="empty">Nothing matched. Try “hat” or “tee”.</p>
           {%- endfor -%}
         </div>
-        {%- if paginate.pages > 1 -%}<nav class="pager" aria-label="Pages">{{ paginate | default_pagination }}</nav>{%- endif -%}
+        {%- render 'pagination', paginate: paginate, search: search -%}
       {%- endpaginate -%}
     {%- endif -%}
   </div>

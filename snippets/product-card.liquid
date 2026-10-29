@@ -27,9 +27,14 @@
   elsif color_values.size > 1
     assign sub = color_values.size | append: ' colors'
   endif
+
+  assign product_url = product.url
+  if collection != blank
+    assign product_url = product.url | within: collection
+  endif
 -%}
 <article class="prod{% if product.gift_card? %} gift{% endif %}" data-type="{{ product.type | escape }}">
-  <a class="media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+  <a class="media" href="{{ product_url }}" tabindex="-1" aria-hidden="true">
     {%- if badge != blank -%}<span class="tag">{{ badge | escape }}</span>{%- endif -%}
     {%- if product.gift_card? -%}
       <div><span class="gm mk-lines"></span><span>GIFT CARD</span></div>
@@ -39,7 +44,7 @@
       {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
     {%- endif -%}
   </a>
-  <h3><a href="{{ product.url }}">{{ product.title | escape }}</a></h3>
+  <h3><a href="{{ product_url }}">{{ product.title | escape }}</a></h3>
   <div class="meta">
     <span>{{ sub | escape }}</span>
     <b>
@@ -55,6 +60,6 @@
       <button class="add" type="submit">Add to cart</button>
     {%- endform -%}
   {%- else -%}
-    <a class="add" href="{{ product.url }}">Choose options</a>
+    <a class="add" href="{{ product_url }}">Choose options</a>
   {%- endif -%}
 </article>

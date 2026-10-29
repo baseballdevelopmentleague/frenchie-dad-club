@@ -1,0 +1,36 @@
+{% doc %}
+  Renders the header menu. A parent link with child links becomes a dropdown on desktop and an accordion in the mobile drawer. Links without children stay plain anchors.
+
+  @param {object} menu - Linklist assigned to the header
+  @param {string} variant - desktop or mobile
+
+  @example
+  {% render 'header-menu', menu: section.settings.menu, variant: 'desktop' %}
+{% enddoc %}
+{%- if menu != blank -%}
+  {%- for link in menu.links -%}
+    {%- if link.links.size > 0 -%}
+      {%- if variant == 'desktop' -%}
+        <div class="nav-item">
+          <button type="button" class="nav-toggle{% if link.active or link.child_active %} is-active{% endif %}" aria-expanded="false" aria-controls="nav-dd-{{ forloop.index }}">{{ link.title | escape }}<svg class="nav-chevron" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.25 5 6.75 8.5 3.25" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <ul class="nav-dropdown" id="nav-dd-{{ forloop.index }}">
+            {%- for child in link.links -%}
+              <li>
+                <a href="{{ child.url }}"{% if child.active %} aria-current="page"{% endif %}>{{ child.title | escape }}</a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- else -%}
+        <details class="mnav-sub"{% if link.active or link.child_active %} open{% endif %}>
+          <summary{% if link.active or link.child_active %} class="is-active"{% endif %}>{{ link.title | escape }}<svg class="nav-chevron" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.25 5 6.75 8.5 3.25" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+          {%- for child in link.links -%}
+            <a href="{{ child.url }}"{% if child.active %} aria-current="page"{% endif %}>{{ child.title | escape }}</a>
+          {%- endfor -%}
+        </details>
+      {%- endif -%}
+    {%- else -%}
+      <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
